@@ -1,3 +1,3 @@
 module github.com/nil-labs/sdb
 
-go 1.17
+go 1.19

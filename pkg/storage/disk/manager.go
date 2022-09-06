@@ -25,10 +25,6 @@ type Page []byte
 // PageId the offset at which the Page starts in the DB file
 type PageId int64
 
-// Read()
-// Write()
-// Close()
-
 // ManagerFromFile constructs a Manager based on the provided db file
 func ManagerFromFile(file string) (*Manager, error) {
 
@@ -44,7 +40,7 @@ func ManagerFromFile(file string) (*Manager, error) {
 	}, nil
 }
 
-// WritePage to the DB file
+// WritePage to the DB file - thread safe as the underlying access to the store is sync-ed
 func (m *Manager) WritePage(id PageId, page Page) error {
 	offset := int64(id * PAGE_SIZE)
 	n, err := m.db.WriteAt(page[:], offset)
@@ -59,6 +55,7 @@ func (m *Manager) WritePage(id PageId, page Page) error {
 }
 
 // ReadPage from the DB file
+// thread safe - can be called by multiple go routines
 func (m *Manager) ReadPage(id PageId, page Page) error {
 	offset := int64(id * PAGE_SIZE)
 	n, err := m.db.ReadAt(page, offset)

@@ -23,7 +23,7 @@ var _ = Describe("Pages I/O", func() {
 		Expect(page2[1]).To(Equal(byte(1)))
 	})
 
-	It("writing pages should take less than 4 µs", Serial, Label("measurement"), func() {
+	It("writing pages should take less than 10 µs", Serial, Label("measurement"), func() {
 		experiment := gmeasure.NewExperiment("Writing Sequential Pages")
 		experiment.Sample(func(idx int) {
 			experiment.MeasureDuration("writing", func() {
@@ -33,6 +33,6 @@ var _ = Describe("Pages I/O", func() {
 		AddReportEntry(experiment.Name, experiment)
 		writingStats := experiment.GetStats("writing")
 		medianDuration := writingStats.DurationFor(gmeasure.StatMedian)
-		Expect(medianDuration).To(BeNumerically("~", time.Microsecond, 4*time.Microsecond))
+		Expect(medianDuration).To(BeNumerically("~", time.Microsecond, 10*time.Microsecond))
 	})
 })

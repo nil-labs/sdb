@@ -23,7 +23,7 @@ type Manager struct {
 type Page [PAGE_SIZE]byte
 
 // PageId the offset at which the Page starts in the DB file
-type PageId int
+type PageId int64
 
 // Read()
 // Write()
@@ -44,7 +44,28 @@ func ManagerFromFile(db *os.File) (*Manager, error) {
 	}, nil
 }
 
-// WritePage writes a page to the DB file
-func WritePage(id PageId, page Page) error {
+// WritePage to the DB file
+func (m *Manager) WritePage(id PageId, page Page) error {
+	offset := int64(id * PAGE_SIZE)
+	n, err := m.db.WriteAt(page[:], offset)
+	if err != nil {
+		return err
+	}
+	if n != PAGE_SIZE {
+		return errors.New("Less than a full page written")
+	}
+	return nil
+}
+
+// ReadPage from the DB file
+func (m *Manager) ReadPage(id PageId, page Page) error {
+	offset := int64(id * PAGE_SIZE)
+	n, err := m.db.ReadAt(page[:], offset)
+	if err != nil {
+		return err
+	}
+	if n != PAGE_SIZE {
+		return errors.New("Less than a full page readed")
+	}
 	return nil
 }

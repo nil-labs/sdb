@@ -1,4 +1,4 @@
-package disk
+package storage
 
 import (
 	"errors"
@@ -9,20 +9,10 @@ var (
 	ErrDBFileNotFound = errors.New("DB File Not Found")
 )
 
-// PAGE_SIZE defines the page size inn bites
-// TODO potentially swtich from a fixed size page size to detecting the Page Size based on the OS/ARCH
-const PAGE_SIZE = 4096
-
 // Manager struct abstracts the persistance of pages on disk
 type Manager struct {
 	db *os.File
 }
-
-// Page smallest set of data readable/writable to the FS
-type Page []byte
-
-// PageId the offset at which the Page starts in the DB file
-type PageId int64
 
 // ManagerFromFile constructs a Manager based on the provided db file
 func ManagerFromFile(file string) (*Manager, error) {
@@ -40,14 +30,14 @@ func ManagerFromFile(file string) (*Manager, error) {
 }
 
 // WritePage to the DB file - thread safe as the underlying access to the store is sync-ed
-func (m *Manager) WritePage(id PageId, page Page) error {
-	offset := int64(id * PAGE_SIZE)
-	n, err := m.db.WriteAt(page, offset)
+func (m *Manager) WritePage(p Page) error {
+	offset := p.Id() * int64(p.Size())
+	n, err := m.db.WriteAt(p.Data(), int64(offset))
 
 	if err != nil {
 		return err
 	}
-	if n != PAGE_SIZE {
+	if n != p.Size() {
 		return errors.New("Less than a full page written")
 	}
 	return m.db.Sync()
@@ -55,22 +45,18 @@ func (m *Manager) WritePage(id PageId, page Page) error {
 
 // ReadPage from the DB file
 // thread safe - can be called by multiple go routines
-func (m *Manager) ReadPage(id PageId, page Page) error {
-	offset := int64(id * PAGE_SIZE)
-	n, err := m.db.ReadAt(page, offset)
+func (m *Manager) ReadPage(p Page) error {
+	offset := p.Id() * int64(p.Size())
+	n, err := m.db.ReadAt(p.Data(), offset)
 	if err != nil {
 		return err
 	}
-	if n != PAGE_SIZE {
-		return errors.New("Less than a full page readed")
+	if n != p.Size() {
+		return errors.New("Less than a full page red")
 	}
 	return nil
 }
 
 func (m *Manager) Close() error {
 	return m.db.Close()
-}
-
-func NewPage() Page {
-	return make(Page, PAGE_SIZE, PAGE_SIZE)
 }

@@ -1,11 +1,11 @@
-package disk_test
+package storage_test
 
 import (
 	"io/ioutil"
 	"os"
 	"testing"
 
-	"github.com/nil-labs/sdb/pkg/storage/disk"
+	"github.com/nil-labs/sdb/pkg/storage"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
@@ -17,12 +17,12 @@ func TestDisk(t *testing.T) {
 
 var db *os.File
 var err error
-var mngr *disk.Manager
+var mngr *storage.Manager
 
 var _ = BeforeSuite(func() {
 	db, err = ioutil.TempFile(os.TempDir(), "*.sdb")
 	Expect(err).NotTo(HaveOccurred())
-	mngr, err = disk.ManagerFromFile(db.Name())
+	mngr, err = storage.ManagerFromFile(db.Name())
 	Expect(err).NotTo(HaveOccurred())
 })
 

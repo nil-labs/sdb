@@ -12,7 +12,7 @@ import (
 
 func TestDisk(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Disk Suite")
+	RunSpecs(t, "Storage Suite")
 }
 
 var db *os.File

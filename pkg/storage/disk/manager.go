@@ -15,8 +15,7 @@ const PAGE_SIZE = 4096
 
 // Manager struct abstracts the persistance of pages on disk
 type Manager struct {
-	db  *os.File
-	log *os.File
+	db *os.File
 }
 
 // Page smallest set of data readable/writable to the FS
@@ -43,7 +42,7 @@ func ManagerFromFile(file string) (*Manager, error) {
 // WritePage to the DB file - thread safe as the underlying access to the store is sync-ed
 func (m *Manager) WritePage(id PageId, page Page) error {
 	offset := int64(id * PAGE_SIZE)
-	n, err := m.db.WriteAt(page[:], offset)
+	n, err := m.db.WriteAt(page, offset)
 
 	if err != nil {
 		return err

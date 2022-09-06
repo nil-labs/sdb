@@ -13,6 +13,9 @@ name: "CodeQL"
 
 on:
   push:
+    paths-ignore:
+     - 'architecture/**'
+     - 'docs/**'
     branches: [ "main" ]
   pull_request:
     # The branches below must be a subset of the branches above

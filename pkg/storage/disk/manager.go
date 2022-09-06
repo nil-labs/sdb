@@ -38,7 +38,6 @@ func ManagerFromFile(db *os.File) (*Manager, error) {
 	if _, err := os.Stat(db.Name()); errors.Is(err, os.ErrNotExist) {
 		return nil, ErrDBFileNotFound
 	}
-
 	return &Manager{
 		db: db,
 	}, nil

@@ -34,7 +34,4 @@ var _ = Describe("Manager", func() {
 			})
 		})
 	})
-	Describe("Writing a Page", func() {
-
-	})
 })

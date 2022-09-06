@@ -2,6 +2,9 @@ name: Build
 
 on:
   push:
+    paths-ignore:
+     - 'architecture/**'
+     - 'docs/**'
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]

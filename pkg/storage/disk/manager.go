@@ -5,8 +5,13 @@ import (
 	"os"
 )
 
-var ErrDBFileNotFound = errors.New("DB File Not Found")
-var ErrLogFileNotFound = errors.New("Log File Not Found")
+var (
+	ErrDBFileNotFound = errors.New("DB File Not Found")
+)
+
+// PAGE_SIZE defines the page size inn bites
+// TODO potentially swtich from a fixed size page size to detecting the Page Size based on the OS/ARCH
+const PAGE_SIZE = 4096
 
 // Manager struct abstracts the persistance of pages on disk
 type Manager struct {
@@ -14,26 +19,32 @@ type Manager struct {
 	log *os.File
 }
 
+// Page smallest set of data readable/writable to the FS
+type Page [PAGE_SIZE]byte
+
+// PageId the offset at which the Page starts in the DB file
+type PageId int
+
 // Read()
 // Write()
 // Close()
 
-// ManagerFromFiles constructs a Manager based on the provided log and db files
-func ManagerFromFiles(db, log *os.File) (*Manager, error) {
+// ManagerFromFile constructs a Manager based on the provided db file
+func ManagerFromFile(db *os.File) (*Manager, error) {
 	if db == nil {
 		return nil, ErrDBFileNotFound
 	}
-	if log == nil {
-		return nil, ErrLogFileNotFound
-	}
+
 	if _, err := os.Stat(db.Name()); errors.Is(err, os.ErrNotExist) {
 		return nil, ErrDBFileNotFound
 	}
-	if _, err := os.Stat(log.Name()); errors.Is(err, os.ErrNotExist) {
-		return nil, ErrLogFileNotFound
-	}
+
 	return &Manager{
-		db:  db,
-		log: log,
+		db: db,
 	}, nil
+}
+
+// WritePage writes a page to the DB file
+func WritePage(id PageId, page Page) error {
+	return nil
 }

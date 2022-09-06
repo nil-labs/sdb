@@ -10,30 +10,31 @@ import (
 )
 
 var _ = Describe("Manager", func() {
+	var db *os.File
+	var err error
+	BeforeEach(func() {
+		db, err = ioutil.TempFile(os.TempDir(), "*.sdb")
+		Expect(err).NotTo(HaveOccurred())
+	})
+	AfterEach(func() {
+		os.Remove(db.Name())
+
+	})
 	Describe("Creating Manager", func() {
 		Context("with existing db and log files", func() {
-			var db, log *os.File
-			var err error
-			BeforeEach(func() {
-				db, err = ioutil.TempFile(os.TempDir(), "*.sdb")
-				Expect(err).NotTo(HaveOccurred())
-				log, err = ioutil.TempFile(os.TempDir(), "*.sdb_log")
-				Expect(err).NotTo(HaveOccurred())
 
-			})
-			AfterEach(func() {
-				os.Remove(db.Name())
-				os.Remove(log.Name())
-			})
 			It("should succeed", func() {
-				Expect(disk.ManagerFromFiles(db, log)).ToNot(BeNil())
+				Expect(disk.ManagerFromFile(db)).ToNot(BeNil())
 			})
 		})
-		Context("with not existing log and db files", func() {
+		Context("with invalid input", func() {
 			It("should return error", func() {
-				_, err := disk.ManagerFromFiles(nil, nil)
+				_, err := disk.ManagerFromFile(nil)
 				Expect(err).To(HaveOccurred())
 			})
 		})
+	})
+	Describe("Writing a Page", func() {
+
 	})
 })

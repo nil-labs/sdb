@@ -20,7 +20,7 @@ type Manager struct {
 }
 
 // Page smallest set of data readable/writable to the FS
-type Page [PAGE_SIZE]byte
+type Page []byte
 
 // PageId the offset at which the Page starts in the DB file
 type PageId int64
@@ -30,16 +30,17 @@ type PageId int64
 // Close()
 
 // ManagerFromFile constructs a Manager based on the provided db file
-func ManagerFromFile(db *os.File) (*Manager, error) {
-	if db == nil {
+func ManagerFromFile(file string) (*Manager, error) {
+
+	if _, err := os.Stat(file); errors.Is(err, os.ErrNotExist) {
 		return nil, ErrDBFileNotFound
 	}
-
-	if _, err := os.Stat(db.Name()); errors.Is(err, os.ErrNotExist) {
-		return nil, ErrDBFileNotFound
+	f, err := os.OpenFile(file, os.O_RDWR|os.O_CREATE, 0666)
+	if err != nil {
+		return nil, err
 	}
 	return &Manager{
-		db: db,
+		db: f,
 	}, nil
 }
 
@@ -47,19 +48,20 @@ func ManagerFromFile(db *os.File) (*Manager, error) {
 func (m *Manager) WritePage(id PageId, page Page) error {
 	offset := int64(id * PAGE_SIZE)
 	n, err := m.db.WriteAt(page[:], offset)
+
 	if err != nil {
 		return err
 	}
 	if n != PAGE_SIZE {
 		return errors.New("Less than a full page written")
 	}
-	return nil
+	return m.db.Sync()
 }
 
 // ReadPage from the DB file
 func (m *Manager) ReadPage(id PageId, page Page) error {
 	offset := int64(id * PAGE_SIZE)
-	n, err := m.db.ReadAt(page[:], offset)
+	n, err := m.db.ReadAt(page, offset)
 	if err != nil {
 		return err
 	}
@@ -67,4 +69,12 @@ func (m *Manager) ReadPage(id PageId, page Page) error {
 		return errors.New("Less than a full page readed")
 	}
 	return nil
+}
+
+func (m *Manager) Close() error {
+	return m.db.Close()
+}
+
+func NewPage() Page {
+	return make(Page, PAGE_SIZE, PAGE_SIZE)
 }

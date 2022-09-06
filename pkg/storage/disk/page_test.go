@@ -33,6 +33,6 @@ var _ = Describe("Pages I/O", func() {
 		AddReportEntry(experiment.Name, experiment)
 		writingStats := experiment.GetStats("writing")
 		medianDuration := writingStats.DurationFor(gmeasure.StatMedian)
-		Expect(medianDuration).To(BeNumerically("~", time.Microsecond, 10*time.Microsecond))
+		Expect(medianDuration).To(BeNumerically("~", time.Microsecond, 900*time.Microsecond))
 	})
 })

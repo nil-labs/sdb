@@ -27,7 +27,7 @@ var _ = Describe("Pages I/O", func() {
 		experiment := gmeasure.NewExperiment("Writing Sequential Pages")
 		experiment.Sample(func(idx int) {
 			experiment.MeasureDuration("writing", func() {
-				mngr.WritePage(page)
+				Expect(mngr.WritePage(page)).NotTo(HaveOccurred())
 			})
 		}, gmeasure.SamplingConfig{N: 500, Duration: time.Minute, NumParallel: 1})
 		AddReportEntry(experiment.Name, experiment)

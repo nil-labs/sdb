@@ -2,7 +2,8 @@ name: golangci-lint
 on:
   push:
     paths-ignore:
-     - 'architecture/**'
+     - '.devcontainer/**'
+     - '.github/**'
      - 'docs/**'
     tags:
       - v*

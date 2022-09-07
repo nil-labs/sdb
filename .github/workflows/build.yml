@@ -3,7 +3,8 @@ name: Build
 on:
   push:
     paths-ignore:
-     - 'architecture/**'
+     - '.devcontainer/**'
+     - '.github/**'
      - 'docs/**'
     branches: [ "main" ]
   pull_request:

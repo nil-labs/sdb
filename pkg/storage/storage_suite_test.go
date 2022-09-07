@@ -1,7 +1,6 @@
 package storage_test
 
 import (
-	"io/ioutil"
 	"os"
 	"testing"
 
@@ -20,7 +19,7 @@ var err error
 var mngr *storage.Manager
 
 var _ = BeforeSuite(func() {
-	db, err = ioutil.TempFile(os.TempDir(), "*.sdb")
+	db, err = os.CreateTemp(os.TempDir(), "*.sdb")
 	Expect(err).NotTo(HaveOccurred())
 	mngr, err = storage.ManagerFromFile(db.Name())
 	Expect(err).NotTo(HaveOccurred())

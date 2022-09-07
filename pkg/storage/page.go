@@ -24,7 +24,7 @@ func (p *page) Size() int {
 
 func NewPage() *page {
 	return &page{
-		data: make([]byte, PAGE_SIZE, PAGE_SIZE),
+		data: make([]byte, PAGE_SIZE),
 	}
 }
 

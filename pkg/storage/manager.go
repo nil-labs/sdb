@@ -38,7 +38,7 @@ func (m *Manager) WritePage(p Page) error {
 		return err
 	}
 	if n != p.Size() {
-		return errors.New("Less than a full page written")
+		return errors.New("less than a full page written")
 	}
 	return m.db.Sync()
 }
@@ -52,7 +52,7 @@ func (m *Manager) ReadPage(p Page) error {
 		return err
 	}
 	if n != p.Size() {
-		return errors.New("Less than a full page red")
+		return errors.New("less than a full page red")
 	}
 	return nil
 }

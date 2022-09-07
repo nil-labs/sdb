@@ -31,8 +31,8 @@ func ManagerFromFile(file string) (*Manager, error) {
 
 // WritePage to the DB file - thread safe as the underlying access to the store is sync-ed
 func (m *Manager) WritePage(p Page) error {
-	offset := p.Id() * int64(p.Size())
-	n, err := m.db.WriteAt(p.Data(), int64(offset))
+	offset := p.ID() * int64(p.Size())
+	n, err := m.db.WriteAt(p.Data(), offset)
 
 	if err != nil {
 		return err
@@ -46,13 +46,13 @@ func (m *Manager) WritePage(p Page) error {
 // ReadPage from the DB file
 // thread safe - can be called by multiple go routines
 func (m *Manager) ReadPage(p Page) error {
-	offset := p.Id() * int64(p.Size())
+	offset := p.ID() * int64(p.Size())
 	n, err := m.db.ReadAt(p.Data(), offset)
 	if err != nil {
 		return err
 	}
 	if n != p.Size() {
-		return errors.New("less than a full page red")
+		return errors.New("Less than a full page red")
 	}
 	return nil
 }

@@ -1,7 +1,7 @@
 package storage
 
-// PAGE_SIZE sets the page size in bytes
-const PAGE_SIZE = 4096
+// PageSize sets the page size in bytes
+const PageSize = 4096
 
 // Page is the main storage abstraction
 // all data is represented as pages and pages are stored in persistent storage and also
@@ -11,7 +11,7 @@ type page struct {
 	data []byte
 }
 
-func (p *page) Id() int64 {
+func (p *page) ID() int64 {
 	return p.id
 }
 
@@ -19,17 +19,17 @@ func (p *page) Data() []byte {
 	return p.data
 }
 func (p *page) Size() int {
-	return PAGE_SIZE
+	return PageSize
 }
 
-func NewPage() *page {
+func NewPage() Page {
 	return &page{
-		data: make([]byte, PAGE_SIZE),
+		data: make([]byte, PageSize),
 	}
 }
 
 type Page interface {
-	Id() int64
+	ID() int64
 	Data() []byte
 	Size() int
 }

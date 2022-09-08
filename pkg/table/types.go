@@ -7,14 +7,8 @@ type Type interface {
 	Name() string
 }
 
-type Value struct {
-	t     Type
-	bytes []byte
+type Value interface {
+	Type() Type
+	Bytes() []byte
+	Size() uint32
 }
-
-// type strict interface {
-// 	// Type of the value
-// 	Type() Type
-// 	// Bytes holds the byte representation of the value
-// 	Bytes() []byte
-// }

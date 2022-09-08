@@ -9,5 +9,3 @@ type Schema struct {
 	Columns []Column
 	Name    string
 }
-
-// TupleSize

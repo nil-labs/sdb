@@ -1,6 +1,16 @@
 package storage
 
-import "encoding/binary"
+import (
+	"encoding/binary"
+	"errors"
+
+	"github.com/nil-labs/sdb/pkg/table"
+)
+
+var (
+	ErrNotEnoughFreeSpace = errors.New("not enough free space in tuple")
+	ErrTupleSizeIsZero    = errors.New("tuple size cannot be 0")
+)
 
 // PageSize sets the page size in bytes
 const (
@@ -26,7 +36,7 @@ type Page struct {
  *  ----------------------------------------------------------------
  *  | TupleCount (4) | Tuple_1 offset (4) | Tuple_1 size (4) | ... |
  *  ----------------------------------------------------------------
- *
+ * 24 bytes header
  */
 
 func (p *Page) ID() uint32 {
@@ -52,7 +62,22 @@ func (p *Page) TuplePointer() uint32 {
 	return binary.LittleEndian.Uint32(p.bytes[29:34])
 }
 
-func (p *Page) InsertTuple() error {
+func (p *Page) FreeSpace() uint32 {
+	return binary.LittleEndian.Uint32(p.bytes[29:34])
+}
+
+func (p *Page) InsertTuple(tuple *Tuple) error {
+	tSize := tuple.Size()
+	if tSize == 0 {
+		return ErrTupleSizeIsZero
+	}
+	if p.FreeSpace() < tSize {
+		return ErrNotEnoughFreeSpace
+	}
+	// calculate pointer location
+	// copy data
+	// increment tuple count
+	// set new freespace counter
 	return nil
 }
 func (p *Page) DeleteTuple() error {
@@ -67,9 +92,11 @@ func (p *Page) DeleteTuple() error {
  */
 
 type Tuple struct {
-	bytes []byte
-	size  uint32
-	id    RID
+	values []table.Value
+}
+
+func (t *Tuple) Size() uint32 {
+	return 0 //TODO not implemented
 }
 
 type RID struct {

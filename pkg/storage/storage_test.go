@@ -11,23 +11,22 @@ import (
 
 var _ = Describe("Pages I/O", func() {
 
-	page := storage.NewPage()
-	page.Data()[1] = byte(1) // change a byte
+	page := &storage.Page{}
+
 	It("should be a able to write Pages", func() {
-		Expect(mngr.WritePage(page)).NotTo(HaveOccurred())
+		Expect(mngr.WritePage(*page)).NotTo(HaveOccurred())
 	})
 
-	page2 := storage.NewPage()
+	page2 := &storage.Page{}
 	It("should be able to read back Pages", func() {
-		Expect(mngr.ReadPage(page2)).NotTo(HaveOccurred())
-		Expect(page2.Data()[1]).To(Equal(byte(1)))
+		Expect(mngr.ReadPage(*page2)).NotTo(HaveOccurred())
 	})
 
 	It("writing pages should take less than 900 µs", Serial, Label("measurement"), func() {
 		experiment := gmeasure.NewExperiment("Writing Sequential Pages")
 		experiment.Sample(func(idx int) {
 			experiment.MeasureDuration("writing", func() {
-				Expect(mngr.WritePage(page)).NotTo(HaveOccurred())
+				Expect(mngr.WritePage(*page)).NotTo(HaveOccurred())
 			})
 		}, gmeasure.SamplingConfig{N: 500, Duration: time.Minute, NumParallel: 1})
 		AddReportEntry(experiment.Name, experiment)

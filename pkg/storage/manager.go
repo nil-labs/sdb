@@ -7,6 +7,8 @@ import (
 
 var (
 	ErrDBFileNotFound = errors.New("DB File Not Found")
+	ErrPageWrite      = errors.New("incomplete page writen")
+	ErrPageRead       = errors.New("incomplete page read")
 )
 
 // Manager struct abstracts the persistance of pages on disk
@@ -38,7 +40,7 @@ func (m *Manager) WritePage(p Page) error {
 		return err
 	}
 	if n != p.Size() {
-		return errors.New("less than a full page written")
+		return ErrPageWrite
 	}
 	return m.db.Sync()
 }
@@ -52,7 +54,7 @@ func (m *Manager) ReadPage(p Page) error {
 		return err
 	}
 	if n != p.Size() {
-		return errors.New("Less than a full page red")
+		return ErrPageRead
 	}
 	return nil
 }
